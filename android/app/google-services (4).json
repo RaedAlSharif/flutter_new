@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "934507678050",
+    "firebase_url": "https://al-manara-flutt-default-rtdb.firebaseio.com",
+    "project_id": "al-manara-flutt",
+    "storage_bucket": "al-manara-flutt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934507678050:android:45078bf9bad88f6aedc43b",
+        "android_client_info": {
+          "package_name": "com.example.flutter_new"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934507678050-305b3qsh6bi3cckfoi49mv7dmvbldj53.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC1RYZ27wlrXy7Ab-S55KFolJYNLvuMJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934507678050-305b3qsh6bi3cckfoi49mv7dmvbldj53.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
