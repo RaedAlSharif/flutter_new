@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_new/aks.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,17 +47,23 @@ class _CustomDataState extends State<CustomData> {
             Text("Device Width ${MediaQuery.of(context).size.width}"),
             Text("Device Height ${MediaQuery.of(context).size.height}"),
 
-            TextField(
-              controller: userController,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration( labelText: "Username"),
-            ),
+            Center(
+              child: TextField(
+                controller: userController,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration( labelText: "Username"),
+              ),
+      ),
 
-            TextField(
-              controller: passController,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration( labelText: "password"),
-            ),
+      Center(
+        child:TextField(
+      controller: passController,
+      textAlign: TextAlign.center,
+      decoration: InputDecoration( labelText: "Password"),
+    ) ,
+    ),
+
+
             Center(
               child: TextButton(
 
@@ -76,7 +83,7 @@ class _CustomDataState extends State<CustomData> {
 
                         if (password == passController.text) {
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => MyApp()));
+                              MaterialPageRoute(builder: (context) => aks()));
                         }
                         else {
                           
@@ -125,25 +132,26 @@ class MyApp extends StatelessWidget {
           Text("Device Height ${MediaQuery.of(context).size.height}"),
 
           Text("Welcomee bitch"),
-          TextField(
-            controller: emailController,
-            decoration: InputDecoration(
-              labelText: "Email",
-            ),
-          ),
-          TextField(
-            controller: passwordController,
-            decoration: InputDecoration(
-              labelText: "Password",
-            ),
-          ),
-          ElevatedButton(
+          TextButton(
             onPressed: () {
-              emailController.text = "2323";
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => aks()));
+            },
+            child: Text("عكس قيد / طلب ملحق"),
+          ),
+          TextButton(
+            onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CustomData()));
             },
-            child: Text("Sign in"),
+            child: Text("طابعة"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CustomData()));
+            },
+            child: Text("كمبيوتر"),
           )
         ],
       ),
