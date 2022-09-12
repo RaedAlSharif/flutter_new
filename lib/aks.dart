@@ -1,4 +1,6 @@
-import 'dart:html';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -23,66 +25,78 @@ class _aksState extends State<aks> {
 
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          ListTile(
-            title: const Text('عقد'),
-            leading: Radio(
-              value: BestTutorSite.javatpoint,
-              groupValue: _site,
-              onChanged: (BestTutorSite? value) {
-                setState(() {
-                  _site = value!;
-                });
-              },
-            ),
-          ),
-          ListTile(
-            title: const Text('ملحق'),
-            leading: Radio(
-              value: BestTutorSite.w3schools,
-              groupValue: _site,
-              onChanged: (BestTutorSite? value) {
-                setState(() {
-                  _site = value!;
-                });
-              }
-            ),
-          ),
+  Widget build(BuildContext context) =>
+
+    Container(decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage("lib/img/manara.png"),
+            fit: BoxFit.cover
+        )
+    ),
+    child: Scaffold(
 
 
-          Center(
-            child: TextField(
-              controller: numController,
-              decoration: new InputDecoration(labelText: "رقم العقد/الملحق"),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-            ),
-          ),
-          Center(
-            child: TextField(
-              controller: incontroller,
-              decoration: new InputDecoration(labelText: "المؤمن له"),
-              keyboardType: TextInputType.number,
-            ),
-          ),
 
-          Center(
-            child: TextField(
-              controller: yearcontroller,
-              decoration: new InputDecoration(labelText: "السنة"),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-            ),
-          ),
-          DropdownButton<String>(
-          value: dropdownValue,
+    body: Column(
+
+
+    children: [
+
+    ListTile(
+    title: const Text('عقد'),
+    leading: Radio(
+    value: BestTutorSite.javatpoint,
+    groupValue: _site,
+    onChanged: (BestTutorSite? value) {
+    setState(() {
+    _site = value!;
+    });
+    },
+    ),
+    ),
+    ListTile(
+    title: const Text('ملحق'),
+    leading: Radio(
+    value: BestTutorSite.w3schools,
+    groupValue: _site,
+    onChanged: (BestTutorSite? value) {
+    setState(() {
+    _site = value!;
+    });
+    }
+    ),
+    ),
+
+
+    Center(
+    child: TextFormField(
+    controller: numController,
+    decoration: new InputDecoration(labelText: "رقم العقد/الملحق"),
+    keyboardType: TextInputType.number,
+    inputFormatters: <TextInputFormatter>[
+    FilteringTextInputFormatter.digitsOnly
+    ],
+    ),
+    ),
+    Center(
+    child: TextFormField(
+    controller: incontroller,
+    decoration: new InputDecoration(labelText: "المؤمن له"),
+    ),
+    ),
+
+    Center(
+    child: TextFormField(
+    controller: yearcontroller,
+    decoration: new InputDecoration(labelText: "السنة"),
+    keyboardType: TextInputType.number,
+    inputFormatters: <TextInputFormatter>[
+    FilteringTextInputFormatter.digitsOnly
+    ],
+    ),
+    ),
+    DropdownButton<String>(
+    value: dropdownValue,
     icon: const Icon(Icons.arrow_downward),
     elevation: 16,
     style: const TextStyle(color: Colors.deepPurple),
@@ -103,24 +117,54 @@ class _aksState extends State<aks> {
     );
     }).toList(),
     )
-,
-          TextButton(onPressed: () async {
-            final Email send_email = Email(
-              body: "رقم العقد او الملحق : " + numController.text + "\n" +
-              "السنه : " + yearcontroller.text + "\n" +
+    ,
+    TextButton(onPressed: () async {
+      final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+      final response = await http.post(
+          url,
+        headers: {
+            'origin': 'http://localhost',
+            'Content-Type': 'application.json'
+        },
+        body: jsonEncode(
+          {
+            'service_id': "service_at95yok",
+            'template_id': "template_gg5sqzl",
+            'template_params': {
+              'user_subject':  " طلب "  + _site.toString(),
+              'user_message':"رقم العقد او الملحق : " + numController.text + "\n" +
+                  "السنه : " + yearcontroller.text + "\n" +
                   "المؤمن له : " + incontroller.text + "\n" +
-                  "نوع التأمين : " + dropdownValue,
-              subject: " طلب "  + _site.toString() ,
-              recipients: ['219SE2179@isik.edu.tr'],
-              isHTML: true,
-            );
+                  "نوع التأمين : " + dropdownValue
+            }
+          },
+        )
+      );
+      print(response.body);
 
-            await FlutterEmailSender.send(send_email);
 
-          }, child: Text("Continue"))
-        ],
-      ),
 
+
+   /* final Email send_email = Email(
+    body: "رقم العقد او الملحق : " + numController.text + "\n" +
+    "السنه : " + yearcontroller.text + "\n" +
+    "المؤمن له : " + incontroller.text + "\n" +
+    "نوع التأمين : " + dropdownValue,
+    subject: " طلب "  + _site.toString() ,
+    recipients: ['219SE2179@isik.edu.tr'],
+    isHTML: true,
     );
-  }
+
+    await FlutterEmailSender.send(send_email);
+*/
+    }, child: Text("Continue"))
+    ],
+
+
+    ),
+
+    ),
+    );
+
+
 }
