@@ -41,6 +41,7 @@ dependencies:
   flutter_email_sender: ^5.1.0
   mailto: ^2.0.0
   url_launcher: ^6.1.5
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,14 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+
+
+  assets:
+    - lib/img/BackGround.jpg
+    - lib/img/BackGround.2.jpg
+    - lib/img/BackGround3.jpg
+    - lib/img/manara.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

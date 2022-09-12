@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_new/aks.dart';
+import 'package:http/http.dart' as http;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -128,31 +129,46 @@ class MyApp extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Text("Device Width ${MediaQuery.of(context).size.width}"),
-          Text("Device Height ${MediaQuery.of(context).size.height}"),
+          Text("${MediaQuery.of(context).size.width}"),
+          Text("${MediaQuery.of(context).size.height} + \n "
+              " \n "
+              "\n"),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => aks()));
+              },
+              child: Text("عكس قيد / طلب ملحق"),
+            ),
+          ),
 
-          Text("Welcomee bitch"),
-          TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => aks()));
-            },
-            child: Text("عكس قيد / طلب ملحق"),
+          Text("\n"
+              "\n"),
+
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CustomData()));
+              },
+              child: Text("طابعة"),
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CustomData()));
-            },
-            child: Text("طابعة"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CustomData()));
-            },
-            child: Text("كمبيوتر"),
+
+          Text("\n"
+              "\n"),
+
+          Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => CustomData()));
+                },
+                child: Text("كمبيوتر"),
+              ),
           )
+
         ],
       ),
     );
