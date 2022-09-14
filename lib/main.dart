@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_new/aks.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,80 +34,31 @@ class _CustomDataState extends State<CustomData> {
   @override
   Widget build(BuildContext context) {
 
-
-    final userController = TextEditingController();
-    final passController = TextEditingController();
-
-
-
-
-
-
-
     return Scaffold(
-      appBar: AppBar(title: Text("Hi"),),
-      body: SingleChildScrollView(
-        child: Column(
 
-          children: [
-            Text("Device Width ${MediaQuery.of(context).size.width}"),
-            Text("Device Height ${MediaQuery.of(context).size.height}"),
+      backgroundColor: Colors.blue.shade800,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            height: 640,
+            width: 1080,
+            margin: EdgeInsets.symmetric(horizontal: 24),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: Colors.white,
+            ),
+            child: Row(
+              children: [
+                LoginPageLeftSide(),
+                if (MediaQuery.of(context).size.width > 900)
+                  const LoginPageRightSide(),
+              ],
 
-            Center(
-              child: TextField(
-                controller: userController,
-                textAlign: TextAlign.center,
-                decoration: InputDecoration( labelText: "Username"),
-              ),
-      ),
-
-      Center(
-        child:TextField(
-      controller: passController,
-      textAlign: TextAlign.center,
-      decoration: InputDecoration( labelText: "Password"),
-    ) ,
-    ),
-
-
-            Center(
-              child: TextButton(
-
-                onPressed: () {
-                  DatabaseReference starCountRef =
-                  FirebaseDatabase.instance.ref('users/'+ userController.text +'/username');
-                  starCountRef.onValue.listen((DatabaseEvent event) {
-                    final username = event.snapshot.value;
-
-
-                    if (username == userController.text) {
-                      DatabaseReference starCountRef2 =
-                      FirebaseDatabase.instance.ref('users/' +
-                          userController.text + '/password');
-                      starCountRef2.onValue.listen((DatabaseEvent event) {
-                        final password = event.snapshot.value;
-
-                        if (password == passController.text) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => aks()));
-                        }
-                        else {
-                          
-                        }
-                      });
-                    }
-                    else{
-
-                    }
-                  });
-                }, child: Text("Continue"),
-
-              ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
-
     );
 
   }
@@ -129,10 +85,7 @@ class MyApp extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Text("${MediaQuery.of(context).size.width}"),
-          Text("${MediaQuery.of(context).size.height} + \n "
-              " \n "
-              "\n"),
+
           Center(
             child: ElevatedButton(
               onPressed: () {
@@ -174,4 +127,151 @@ class MyApp extends StatelessWidget {
     );
   }
 
+}
+class LoginPageLeftSide extends StatelessWidget {
+  final userController = TextEditingController();
+  final passController = TextEditingController();
+
+   LoginPageLeftSide({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(120.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Login", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),),
+                const SizedBox(height: 12,),
+                 TextField(
+                  decoration: InputDecoration(
+                      label: Text("email"),
+                      hintText: "Please write your email address"
+                  ),
+                  controller: userController,
+                ),
+                 TextField(
+                   controller: passController,
+                  decoration: InputDecoration(
+                      label: Text("password"),
+                      hintText: "Please write your password"
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+
+
+                MaterialButton(onPressed: (){
+                  DatabaseReference starCountRef =
+                  FirebaseDatabase.instance.ref('users/'+ userController.text +'/username');
+                  starCountRef.onValue.listen((DatabaseEvent event) {
+                    final username = event.snapshot.value;
+
+
+                    if (username == userController.text) {
+                      if (userController.text == "admin"){
+                        DatabaseReference starCountRef2 =
+                        FirebaseDatabase.instance.ref('users/' +
+                            userController.text + '/password');
+                        starCountRef2.onValue.listen((DatabaseEvent event) {
+                          final password = event.snapshot.value;
+
+                          if (password == passController.text) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => adminPage()));
+
+                          }
+                        });
+                      }
+if (userController.text != "admin"){
+  DatabaseReference starCountRef2 =
+  FirebaseDatabase.instance.ref('users/' +
+      userController.text + '/password');
+  starCountRef2.onValue.listen((DatabaseEvent event) {
+    final password = event.snapshot.value;
+
+    if (password == passController.text) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => aks()));
+    }
+    else {
+
+    }
+  });
+}
+
+                    }
+                    else{
+
+                    }
+                  });
+                },child: Text("Login"),
+                  minWidth: double.infinity,
+                  height: 52,
+                  elevation: 24,
+                  color: Colors.blue.shade800,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32)
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
+  }
+}
+class LoginPageRightSide extends StatelessWidget {
+  const LoginPageRightSide({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Container(
+          color: Colors.orange,
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('lib/img/manara.png'),
+                  fit: BoxFit.fill),
+            ),
+          ),
+        ));
+  }
+}
+
+
+class adminPage extends StatefulWidget {
+  const adminPage({Key? key}) : super(key: key);
+
+  @override
+  State<adminPage> createState() => _adminPageState();
+}
+
+class _adminPageState extends State<adminPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Scaffold(
+
+        body: Column(
+          children: [
+            TextButton(onPressed: (){
+            Navigator.push(context,
+            MaterialPageRoute(builder: (context) => aks()));
+            }, child: Text("Create new User")),
+            TextButton(onPressed: (){
+            Navigator.push(context,
+            MaterialPageRoute(builder: (context) => aks()));
+            }, child: Text("View all users"))
+          ],
+        )
+      ),
+
+    );
+  }
 }
