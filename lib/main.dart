@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ color: Colors.white,
 ),
 child: Row(
 children: [
-LoginPageLeftSide(),
+LoginLeft(),
 if (MediaQuery.of(context).size.width > 900)
 const LoginPageRightSide(),
 ],
@@ -129,11 +130,19 @@ child: Text("كمبيوتر"),
 }
 
 }
-class LoginPageLeftSide extends StatelessWidget {
+class LoginLeft extends StatefulWidget {
+  const LoginLeft({Key? key}) : super(key: key);
+
+  @override
+  _LoginLeftState createState() => _LoginLeftState();
+}
+
+class _LoginLeftState extends State<LoginLeft> {
+  @override
 final userController = TextEditingController();
 final passController = TextEditingController();
 
-LoginPageLeftSide({Key? key}) : super(key: key);
+String str = "";
 
 @override
 Widget build(BuildContext context) {
@@ -150,12 +159,14 @@ const Text("Login", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
 const SizedBox(height: 12,),
 TextField(
 decoration: InputDecoration(
-label: Text("email"),
-hintText: "Please write your email address"
+label: Text("Username"),
+hintText: "Please write your username",
 ),
+
 controller: userController,
 ),
 TextField(
+  obscureText: true,
 controller: passController,
 decoration: InputDecoration(
 label: Text("password"),
@@ -167,10 +178,24 @@ const SizedBox(height: 24),
 
 
 MaterialButton(onPressed: (){
+
 DatabaseReference starCountRef =
 FirebaseDatabase.instance.ref('users/'+ userController.text +'/username');
 starCountRef.onValue.listen((DatabaseEvent event) {
 final username = event.snapshot.value;
+
+if (userController.text.isEmpty){
+  setState(() {
+    str = "Username required";
+  });
+  return;
+}
+if (passController.text.isEmpty){
+  setState(() {
+    str = "Password required";
+  });
+  return;
+}
 
 
 if (username == userController.text) {
@@ -200,6 +225,9 @@ Navigator.push(context,
 MaterialPageRoute(builder: (context) => aks()));
 }
 else {
+  setState(() {
+    str = "Invalid Username or Password";
+});
 
 }
 });
@@ -207,7 +235,9 @@ else {
 
 }
 else{
-
+  setState(() {
+    str = "Invalid Username or Password";
+  });
 }
 });
 },child: Text("Login"),
@@ -219,7 +249,9 @@ textColor: Colors.white,
 shape: RoundedRectangleBorder(
 borderRadius: BorderRadius.circular(32)
 ),
-)
+),
+
+  Text("\n" + str ,style: TextStyle(color: Colors.red), ),
 ],
 ),
 ),
@@ -270,9 +302,9 @@ Widget build(BuildContext context) {
           ),
           child: Row(
             children: [
-              addUserAdmin(),
+              viewAllUsersAdmin(),
               if (MediaQuery.of(context).size.width > 900)
-                const viewAllUsersAdmin(),
+                const addUserAdmin(),
             ],
 
           ),
@@ -307,6 +339,8 @@ class _addUserAdminState extends State<addUserAdmin> {
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      const Text("All Users", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),),
+      const SizedBox(height: 12,),
       Flexible(
 
       child: FirebaseAnimatedList(
@@ -350,6 +384,8 @@ class _viewAllUsersAdminState extends State<viewAllUsersAdmin> {
   final DepartController = TextEditingController();
   final emailController = TextEditingController();
 
+  String str = "";
+
   @override
   Widget build(BuildContext context) {
 
@@ -363,6 +399,8 @@ class _viewAllUsersAdminState extends State<viewAllUsersAdmin> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text("Add new User", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),),
+                const SizedBox(height: 12,),
                 TextField(
                   decoration: InputDecoration(
                       label: Text("Username"),
@@ -372,6 +410,7 @@ class _viewAllUsersAdminState extends State<viewAllUsersAdmin> {
                 ),
                 TextField(
                   controller: passController,
+                  obscureText: true,
                   decoration: InputDecoration(
                       label: Text("password"),
                       hintText: "Please write the password"
@@ -393,6 +432,44 @@ class _viewAllUsersAdminState extends State<viewAllUsersAdmin> {
                 ),
                 const SizedBox(height: 24),
                 MaterialButton(onPressed: () {
+
+                  if (userController.text.isEmpty){
+                    setState(() {
+                      str = "Username required";
+                    });
+                    return;
+                  }
+                  if (passController.text.isEmpty){
+                    setState(() {
+                      str = "Password required";
+                    });
+                    return;
+                  }
+                  if (DepartController.text.isEmpty){
+                    setState(() {
+                      str = "Department required";
+                    });
+                    return;
+                  }
+                  if (emailController.text.isEmpty){
+                    setState(() {
+                      str = "E-mail required";
+                    });
+                    return;
+                  }
+                  if(passController.text.length < 6){
+                    setState(() {
+                      str = "Password must be at least 6 characters";
+                    });
+                    return;
+                  }
+                  if(!EmailValidator.validate(emailController.text, true)){
+                    setState(() {
+                      str = "Invalid Email Address";
+                    });
+                    return;
+                  }
+
                   ref.child(userController.text).child("username").set(userController.text).asStream();
                   ref.child(userController.text).child("password").set(passController.text).asStream();
                   ref.child(userController.text).child("department").set(DepartController.text).asStream();
@@ -408,8 +485,9 @@ class _viewAllUsersAdminState extends State<viewAllUsersAdmin> {
                       borderRadius: BorderRadius.circular(32)
                 ),
 
-      )
 
+      ),
+Text("\n" + str , style: TextStyle(color: Colors.red),),
 
               ],
 
@@ -452,10 +530,6 @@ class _AdminUpdateState extends State<AdminUpdate> {
                  , int index ){
                return ListTile(
                  trailing: IconButton(icon: Icon(Icons.edit), onPressed: () =>{
-       setState(() {
-       k = snapshot.key;
-       }),
-
        showDialog(
        context: context,
        builder: (ctx) => AlertDialog(
@@ -465,7 +539,7 @@ class _AdminUpdateState extends State<AdminUpdate> {
        controller: userController,
        textAlign: TextAlign.center,
        decoration: InputDecoration(
-       hintText: 'title',
+       hintText: 'new Username',
        ),
        ),
        ),
@@ -475,7 +549,7 @@ class _AdminUpdateState extends State<AdminUpdate> {
        controller: passController,
        textAlign: TextAlign.center,
        decoration: InputDecoration(
-       hintText: 'sub title',
+       hintText: 'new Password',
        ),
        ),
        ),
@@ -494,7 +568,10 @@ class _AdminUpdateState extends State<AdminUpdate> {
        ),
        MaterialButton(
        onPressed: () async {
-       await upd();
+
+         String str = snapshot.key.toString();
+       //  ref.update({snapshot.key.toString(): userController.text});
+         ref.child(userController.text+ "/").update({"username": userController.text , "password": passController});
        Navigator.of(ctx).pop();
        },
        color: Color.fromARGB(255, 0, 22, 145),
