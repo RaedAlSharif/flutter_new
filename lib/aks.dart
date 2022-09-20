@@ -154,12 +154,12 @@ class _aksState extends State<aks> {
                             }
 
 
-                            ref.child(userController.text).child("username").set(userController.text).asStream();
+                     /*       ref.child(userController.text).child("username").set(userController.text).asStream();
                             ref.child(userController.text).child("password").set(passController.text).asStream();
                             ref.child(userController.text).child("department").set(DepartController.text).asStream();
                             ref.child(userController.text).child("E-mail").set(emailController.text).asStream();
 
-
+*/
                             final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
                             final response = await http.post(
                                 url,
