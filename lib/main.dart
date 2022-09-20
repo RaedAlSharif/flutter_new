@@ -220,6 +220,7 @@ userController.text + '/password');
 starCountRef2.onValue.listen((DatabaseEvent event) {
 final password = event.snapshot.value;
 
+
 if (password == passController.text) {
 Navigator.push(context,
 MaterialPageRoute(builder: (context) => aks()));
@@ -347,11 +348,20 @@ class _addUserAdminState extends State<addUserAdmin> {
           query: ref, itemBuilder: (BuildContext context,
       DataSnapshot snapshot ,
       Animation<double> animaton
-      , int index ){
+      , int index )
+
+      {
+        Map user = snapshot.value as Map;
             return ListTile(
               trailing: IconButton(icon: Icon(Icons.delete), onPressed: () =>
                 ref.child(snapshot.key.toString()).remove(),),
-              title: Text(snapshot.key.toString()),
+              title: Text(snapshot.key.toString() + "\n"
+                  + "Username: "+ user['username']  + "\n"
+                  + "Password: "+ user['password'] + "\n"
+                  + "Department: " + "\n"
+                  + "E-mail: " + "\n\n"
+
+              ),
             );
       } ) ),
 
@@ -475,6 +485,7 @@ class _viewAllUsersAdminState extends State<viewAllUsersAdmin> {
                   ref.child(userController.text).child("department").set(DepartController.text).asStream();
                   ref.child(userController.text).child("E-mail").set(emailController.text).asStream();
 
+
                 }, child: Text("Continue"),
                   minWidth: double.infinity,
                   height: 52,
@@ -516,20 +527,28 @@ class _AdminUpdateState extends State<AdminUpdate> {
   final userController = TextEditingController();
   final passController = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
+
    return Scaffold(
      body: Column(
        children: [
          Flexible(
 
              child: FirebaseAnimatedList(
+
                  query: ref, itemBuilder: (BuildContext context,
                  DataSnapshot snapshot ,
                  Animation<double> animaton
-                 , int index ){
+                 , int index ) {
+
+                   Map user = snapshot.value as Map;
+
                return ListTile(
+
                  trailing: IconButton(icon: Icon(Icons.edit), onPressed: () =>{
+
        showDialog(
        context: context,
        builder: (ctx) => AlertDialog(
@@ -568,11 +587,12 @@ class _AdminUpdateState extends State<AdminUpdate> {
        ),
        MaterialButton(
        onPressed: () async {
-
-         String str = snapshot.key.toString();
        //  ref.update({snapshot.key.toString(): userController.text});
          ref.child(userController.text+ "/").update({"username": userController.text , "password": passController});
        Navigator.of(ctx).pop();
+
+
+
        },
        color: Color.fromARGB(255, 0, 22, 145),
        child: Text(
@@ -584,9 +604,17 @@ class _AdminUpdateState extends State<AdminUpdate> {
        ),
        ],
        ),
-       )
-                 }),
-                 title: Text(snapshot.key.toString()),
+       ),
+
+               }),
+
+                  title: Text( snapshot.key.toString() + "\n\n"
+                     + "Username: "+ user['username']  + "\n\n"
+                     + "Password: "+ user['password'] + "\n\n"
+                     + "Department: " + "\n\n"
+                     + "E-mail: "
+
+               ),
                );
              } ) ),
        ],
