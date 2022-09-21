@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_new/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class aks extends StatefulWidget {
 
 class _aksState extends State<aks> {
   BestTutorSite _site = BestTutorSite.javatpoint;
-  String str = "";
+  static String str = "";
   String str2 = "";
   String errorMassage = "";
 
@@ -26,7 +27,8 @@ class _aksState extends State<aks> {
   final incontroller = TextEditingController();
 
 
-  DatabaseReference ref = FirebaseDatabase.instance.ref('AllRequests/');
+  DatabaseReference ref = FirebaseDatabase.instance.ref('requests/');
+  DatabaseReference ref2 = FirebaseDatabase.instance.ref(cus_department.elementAt(2)+'/');
 
   @override
   Widget build(BuildContext context) =>
@@ -104,7 +106,8 @@ class _aksState extends State<aks> {
                               ],
                             ),
                           ),
-                          DropdownButton<String>(
+                        Text("نوع التأمين = " + cus_department.elementAt(2))
+                        /*  DropdownButton<String>(
                             value: dropdownValue,
                             icon: const Icon(Icons.arrow_downward),
                             elevation: 16,
@@ -125,7 +128,7 @@ class _aksState extends State<aks> {
                                 child: Text(value),
                               );
                             }).toList(),
-                          )
+                          )*/
                           ,
 
 
@@ -148,18 +151,23 @@ class _aksState extends State<aks> {
                               errorMassage = "ادخل المؤمن له";
                               return;
                             }
-                            if(dropdownValue == ''){
+                           /* if(MyApp.cus_department == ''){
                               errorMassage = "اختار نوع التأمين";
                               return;
-                            }
+                            }*/
 
 
-                     /*       ref.child(userController.text).child("username").set(userController.text).asStream();
-                            ref.child(userController.text).child("password").set(passController.text).asStream();
-                            ref.child(userController.text).child("department").set(DepartController.text).asStream();
-                            ref.child(userController.text).child("E-mail").set(emailController.text).asStream();
+                            ref.child(cus_department.elementAt(0) +" "+  str).child("السنة").set(yearcontroller.text).asStream();
+                            ref.child(cus_department.elementAt(0) +" "+  str).child("المؤمن له").set(incontroller.text).asStream();
+                            ref.child(cus_department.elementAt(0) +" "+  str).child("رقم الطلب").set(numController.text).asStream();
+                            ref.child(cus_department.elementAt(0) +" "+  str).child("نوع التأمين").set(cus_department.elementAt(2)).asStream();
 
-*/
+                            ref2.child(cus_department.elementAt(0) +" "+ str).child("السنة").set(yearcontroller.text).asStream();
+                            ref2.child(cus_department.elementAt(0) +" "+  str).child("المؤمن له").set(incontroller.text).asStream();
+                            ref2.child(cus_department.elementAt(0) +" "+  str).child("رقم الطلب").set(numController.text).asStream();
+                            ref2.child(cus_department.elementAt(0) +" "+  str).child("نوع التأمين").set(cus_department.elementAt(2)).asStream();
+
+
                             final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
                             final response = await http.post(
                                 url,
@@ -178,7 +186,7 @@ class _aksState extends State<aks> {
                                       'user_message1':"رقم ال" + str2 + " : " +   numController.text  ,
                                       'user_message2': "\n\nالسنه : " + yearcontroller.text + "\n\n" ,
                                       'user_message3': "\n\nالمؤمن له : " + incontroller.text + "\n\n" ,
-                                      'user_message4':  "\n\nنوع التأمين : " + dropdownValue,
+                                      'user_message4':  "\n\nنوع التأمين : " + cus_department[2],
                                     }
                                   },
                                 )

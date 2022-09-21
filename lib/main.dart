@@ -7,11 +7,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_new/Manager.dart';
 import 'package:flutter_new/aks.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+List<String> cus_department = [];
 Future main() async {
+
 WidgetsFlutterBinding.ensureInitialized();
 
 await Firebase.initializeApp(options: const FirebaseOptions(
@@ -20,6 +23,7 @@ appId: "1:934507678050:android:45078bf9bad88f6aedc43b",
 projectId: "al-manara-flutt",
 databaseURL: "https://al-manara-flutt-default-rtdb.firebaseio.com/",
 messagingSenderId: '934507678050')
+
 );
 
 runApp(const MyApp2());
@@ -54,6 +58,7 @@ child: Row(
 children: [
 LoginLeft(),
 if (MediaQuery.of(context).size.width > 900)
+
 const LoginPageRightSide(),
 ],
 
@@ -77,6 +82,8 @@ home: MyApp() //create new widget class for this 'home' to
 }
 class MyApp extends StatelessWidget {
 
+ static String insurance_type = '';
+
 final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 // This widget is the root of your application.
@@ -91,6 +98,7 @@ children: [
 Center(
 child: ElevatedButton(
 onPressed: () {
+
 Navigator.push(context,
 MaterialPageRoute(builder: (context) => aks()));
 },
@@ -144,8 +152,11 @@ final passController = TextEditingController();
 
 String str = "";
 
+
+
 @override
 Widget build(BuildContext context) {
+  cus_department.clear();
 return Expanded(
 child: Center(
 child: Padding(
@@ -222,8 +233,35 @@ final password = event.snapshot.value;
 
 
 if (password == passController.text) {
-Navigator.push(context,
-MaterialPageRoute(builder: (context) => aks()));
+  DatabaseReference starCountRef2 =
+  FirebaseDatabase.instance.ref('users/' +
+  userController.text + '/department');
+  starCountRef2.onValue.listen((DatabaseEvent event) {
+    final depart = event.snapshot.value;
+    //cus_department.contains(depart.toString());
+
+    DatabaseReference starCountRef2 =
+  FirebaseDatabase.instance.ref('users/' +
+  userController.text + '/E-mail');
+  starCountRef2.onValue.listen((DatabaseEvent event) {
+    final email = event.snapshot.value;
+    cus_department.contains(depart.toString());
+cus_department.add(username.toString());
+    cus_department.add(password.toString());
+        cus_department.add(depart.toString());
+    cus_department.add(email.toString());
+  });
+  });
+  if(userController.text == "motor_Manager" || userController.text == "IT_manager"){
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Managers()));
+  }
+  else{
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => aks()));
+  }
+
+
 }
 else {
   setState(() {
